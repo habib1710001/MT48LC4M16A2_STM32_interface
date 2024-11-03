@@ -1,0 +1,6 @@
+../../../Drivers/STM32H7RSxx_HAL_Driver/Inc/stm32h7rsxx_ll_rcc.h:2542:22:LL_RCC_SetFMCClockSource	1
+C:/Users/C837269287/Documents/GitHub/MT48LC4M16A2_STM32_interface/GPIO_InfiniteLedToggling_Init/Boot/Src/stm32h7rsxx_hal_msp.c:64:6:HAL_MspInit	1
+C:/Users/C837269287/Documents/GitHub/MT48LC4M16A2_STM32_interface/GPIO_InfiniteLedToggling_Init/Boot/Src/stm32h7rsxx_hal_msp.c:83:13:HAL_FMC_MspInit	2
+C:/Users/C837269287/Documents/GitHub/MT48LC4M16A2_STM32_interface/GPIO_InfiniteLedToggling_Init/Boot/Src/stm32h7rsxx_hal_msp.c:204:6:HAL_SDRAM_MspInit	1
+C:/Users/C837269287/Documents/GitHub/MT48LC4M16A2_STM32_interface/GPIO_InfiniteLedToggling_Init/Boot/Src/stm32h7rsxx_hal_msp.c:216:13:HAL_FMC_MspDeInit	2
+C:/Users/C837269287/Documents/GitHub/MT48LC4M16A2_STM32_interface/GPIO_InfiniteLedToggling_Init/Boot/Src/stm32h7rsxx_hal_msp.c:292:6:HAL_SDRAM_MspDeInit	1
