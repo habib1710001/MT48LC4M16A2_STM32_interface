@@ -1,21 +1,31 @@
-15:44:36 **** Incremental Build of configuration Debug for project sdram_interfacin_Boot ****
+17:29:08 **** Incremental Build of configuration Debug for project sdram_interfacin_Boot ****
 make -j28 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m7 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32H7S3xx -c -I../Core/Inc -I../../Drivers/STM32H7RSxx_HAL_Driver/Inc -I../../Drivers/STM32H7RSxx_HAL_Driver/Inc/Legacy -I../../Middlewares/ST/STM32_ExtMem_Manager -I../../Middlewares/ST/STM32_ExtMem_Manager/boot -I../../Middlewares/ST/STM32_ExtMem_Manager/sal -I../../Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp -I../../Middlewares/ST/STM32_ExtMem_Manager/psram -I../../Middlewares/ST/STM32_ExtMem_Manager/sdcard -I../../Middlewares/ST/STM32_ExtMem_Manager/user -I../../Drivers/CMSIS/Device/ST/STM32H7RSxx/Include -I../../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c:67:25: warning: initialization of 'uint32_t *' {aka 'long unsigned int *'} from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   67 | uint32_t *externalRAM = 0xD000000;
+      |                         ^~~~~~~~~
+arm-none-eabi-gcc -o "sdram_interfacin_Boot.elf" @"objects.list"   -mcpu=cortex-m7 -T"C:\Users\C837269287\Documents\GitHub\MT48LC4M16A2_STM32_interface\sdram_interfacin\Boot\STM32H7S3L8HX_FLASH.ld" --specs=nosys.specs -Wl,-Map="sdram_interfacin_Boot.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: sdram_interfacin_Boot.elf
+ 
 arm-none-eabi-size  sdram_interfacin_Boot.elf 
+arm-none-eabi-objdump -h -S sdram_interfacin_Boot.elf  > "sdram_interfacin_Boot.list"
    text	   data	    bss	    dec	    hex	filename
-  36108	     12	   2284	  38404	   9604	sdram_interfacin_Boot.elf
+  36044	     16	   2284	  38344	   95c8	sdram_interfacin_Boot.elf
 Finished building: default.size.stdout
  
-15:44:39 **** Incremental Build of configuration Debug for project sdram_interfacin_Boot ****
+Finished building: sdram_interfacin_Boot.list
+ 
+17:29:13 **** Incremental Build of configuration Debug for project sdram_interfacin_Boot ****
 make -j28 all 
 arm-none-eabi-size  sdram_interfacin_Boot.elf 
    text	   data	    bss	    dec	    hex	filename
-  36108	     12	   2284	  38404	   9604	sdram_interfacin_Boot.elf
+  36044	     16	   2284	  38344	   95c8	sdram_interfacin_Boot.elf
 Finished building: default.size.stdout
  
-15:44:45 **** Incremental Build of configuration Debug for project sdram_interfacin_Boot ****
+17:29:26 **** Incremental Build of configuration Debug for project sdram_interfacin_Boot ****
 make -j28 all 
 arm-none-eabi-size  sdram_interfacin_Boot.elf 
    text	   data	    bss	    dec	    hex	filename
-  36108	     12	   2284	  38404	   9604	sdram_interfacin_Boot.elf
+  36044	     16	   2284	  38344	   95c8	sdram_interfacin_Boot.elf
 Finished building: default.size.stdout
  

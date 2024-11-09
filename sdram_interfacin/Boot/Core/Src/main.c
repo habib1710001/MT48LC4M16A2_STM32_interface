@@ -33,7 +33,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define SDRAM_ADDRESS_START 0xD0000000
-#define SDRAM_SIZE 0x10000
+#define SDRAM_SIZE 0x1000000
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -64,56 +64,19 @@ static void MX_FMC_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void FMC_ERASE(){
-	uint32_t counter;
-
-
-	uint32_t fmcTestStart;
-	uint32_t fmcTestStop;
-
-
-	//Erase SDRAM memory
-	fmcTestStart = HAL_GetTick();
-
-
-	for (counter = 0x00; counter < SDRAM_SIZE; counter++){
-		*(__IO uint8_t*)(SDRAM_ADDRESS_START + counter) = (uint8_t)0x0;
-	}
-
-
-	fmcTestStop = HAL_GetTick() - fmcTestStart;
-
-
-	HAL_Delay(50);
-}
-
-
+uint32_t *externalRAM = 0xD000000;
+uint8_t sdramStatus;
 
 
 void FMC_WRITE(){
-	uint32_t counter;
-	uint8_t testByte = 0x00;
 
+	const uint32_t size = 1000;
 
-	uint32_t fmcTestStart;
-	uint32_t fmcTestStop;
-
-
-	//Write SDRAM memory
-	fmcTestStart = HAL_GetTick();
-
-
-	for (counter = 0x00; counter < SDRAM_SIZE; counter++){
-		*(__IO uint8_t*)(SDRAM_ADDRESS_START + counter) = (uint8_t)(testByte+counter);
+	//write external RAM
+	for(int i = 0; i < size; i++)
+	{
+	    externalRAM[i] = i;
 	}
-
-
-	fmcTestStop = HAL_GetTick() - fmcTestStart;
-
-
-	HAL_Delay(50);
-
-
 }
 
 /* USER CODE END 0 */
@@ -163,9 +126,6 @@ int main(void)
   MX_FMC_Init();
   MX_EXTMEM_MANAGER_Init();
   /* USER CODE BEGIN 2 */
-
-  //FMC_ERASE();
-  HAL_Delay(1050);
 
   FMC_WRITE();
 
@@ -223,13 +183,13 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL2.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL2.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL2.PLLM = 4;
-  RCC_OscInitStruct.PLL2.PLLN = 41;
+  RCC_OscInitStruct.PLL2.PLLN = 25;
   RCC_OscInitStruct.PLL2.PLLP = 2;
   RCC_OscInitStruct.PLL2.PLLQ = 2;
   RCC_OscInitStruct.PLL2.PLLR = 2;
   RCC_OscInitStruct.PLL2.PLLS = 2;
   RCC_OscInitStruct.PLL2.PLLT = 2;
-  RCC_OscInitStruct.PLL2.PLLFractional = 6144;
+  RCC_OscInitStruct.PLL2.PLLFractional = 0;
   RCC_OscInitStruct.PLL3.PLLState = RCC_PLL_NONE;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
@@ -349,11 +309,11 @@ static void MX_FMC_Init(void)
   hsdram2.Init.RowBitsNumber = FMC_SDRAM_ROW_BITS_NUM_12;
   hsdram2.Init.MemoryDataWidth = FMC_SDRAM_MEM_BUS_WIDTH_16;
   hsdram2.Init.InternalBankNumber = FMC_SDRAM_INTERN_BANKS_NUM_4;
-  hsdram2.Init.CASLatency = FMC_SDRAM_CAS_LATENCY_3;
+  hsdram2.Init.CASLatency = FMC_SDRAM_CAS_LATENCY_2;
   hsdram2.Init.WriteProtection = FMC_SDRAM_WRITE_PROTECTION_DISABLE;
   hsdram2.Init.SDClockPeriod = FMC_SDRAM_CLOCK_PERIOD_2;
-  hsdram2.Init.ReadBurst = FMC_SDRAM_RBURST_DISABLE;
-  hsdram2.Init.ReadPipeDelay = FMC_SDRAM_RPIPE_DELAY_0;
+  hsdram2.Init.ReadBurst = FMC_SDRAM_RBURST_ENABLE;
+  hsdram2.Init.ReadPipeDelay = FMC_SDRAM_RPIPE_DELAY_2;
   /* SdramTiming */
   SdramTiming.LoadToActiveDelay = 2;
   SdramTiming.ExitSelfRefreshDelay = 7;
@@ -369,33 +329,32 @@ static void MX_FMC_Init(void)
   }
 
   /* USER CODE BEGIN FMC_Init 2 */
-  FMC_SDRAM_CommandTypeDef Command;
-     HAL_StatusTypeDef status;
-     /* Step 1 and Step 2 already done in HAL_SDRAM_Init() */
-     /* Step 3: Configure a clock configuration enable command */
-      Command.CommandMode            = FMC_SDRAM_CMD_CLK_ENABLE; /* Set MODE bits to "001" */
-      Command.CommandTarget          = FMC_SDRAM_CMD_TARGET_BANK2; /* configure the Target Bank bits */
-      Command.AutoRefreshNumber      = 1;
-      Command.ModeRegisterDefinition = 0;
-      status = HAL_SDRAM_SendCommand(&hsdram2, &Command, 0xfff);
-      HAL_Delay(1); /* Step 4: Insert 100 us minimum delay - Min HAL Delay is 1ms */
-      /* Step 5: Configure a PALL (precharge all) command */
-      Command.CommandMode            = FMC_SDRAM_CMD_PALL; /* Set MODE bits to "010" */
-      status = HAL_SDRAM_SendCommand(&hsdram2, &Command, 0xfff);
-      /* Step 6: Configure an Auto Refresh command */
-      Command.CommandMode            = FMC_SDRAM_CMD_AUTOREFRESH_MODE; /* Set MODE bits to "011" */
-      Command.AutoRefreshNumber      = 2;
-      status =HAL_SDRAM_SendCommand(&hsdram2, &Command, 0xfff);
-      /* Step 7: Program the external memory mode register */
-      Command.CommandMode            = FMC_SDRAM_CMD_LOAD_MODE;/*set the MODE bits to "100" */
-      Command.ModeRegisterDefinition =  (uint32_t)0 | 0<<3 | 2<<4 | 0<<7 | 1<<9;
-      status = HAL_SDRAM_SendCommand(&hsdram2, &Command, 0xfff);
-      /* Step 8: Set the refresh rate counter - refer to section SDRAM refresh timer register in RM0455 */
-      /* Set the device refresh rate
-       * COUNT = [(SDRAM self refresh time / number of row) x  SDRAM CLK] – 20
-               = [(64ms/4096) * 167MHz] - 20 = 2599.375 - 20 ~ 1542 */
-      status = HAL_SDRAM_ProgramRefreshRate(&hsdram2, 2599);
-
+  /* USER CODE BEGIN FMC_Init 2 */
+    FMC_SDRAM_CommandTypeDef Command;
+    /* Step 1 and Step 2 already done in HAL_SDRAM_Init() */
+    /* Step 3: Configure a clock configuration enable command */
+     Command.CommandMode            = FMC_SDRAM_CMD_CLK_ENABLE; /* Set MODE bits to "001" */
+     Command.CommandTarget          = FMC_SDRAM_CMD_TARGET_BANK2; /* configure the Target Bank bits */
+     Command.AutoRefreshNumber      = 1;
+     Command.ModeRegisterDefinition = 0;
+     HAL_SDRAM_SendCommand(&hsdram2, &Command, 0xfff);
+     HAL_Delay(1); /* Step 4: Insert 100 us minimum delay - Min HAL Delay is 1ms */
+     /* Step 5: Configure a PALL (precharge all) command */
+     Command.CommandMode            = FMC_SDRAM_CMD_PALL; /* Set MODE bits to "010" */
+     HAL_SDRAM_SendCommand(&hsdram2, &Command, 0xfff);
+     /* Step 6: Configure an Auto Refresh command */
+     Command.CommandMode            = FMC_SDRAM_CMD_AUTOREFRESH_MODE; /* Set MODE bits to "011" */
+     Command.AutoRefreshNumber      = 2;
+     HAL_SDRAM_SendCommand(&hsdram2, &Command, 0xfff);
+     /* Step 7: Program the external memory mode register */
+     Command.CommandMode            = FMC_SDRAM_CMD_LOAD_MODE;/*set the MODE bits to "100" */
+     Command.ModeRegisterDefinition =  (uint32_t)0 | 0<<3 | 2<<4 | 0<<7 | 1<<9;
+     HAL_SDRAM_SendCommand(&hsdram2, &Command, 0xfff);
+     /* Step 8: Set the refresh rate counter - refer to section SDRAM refresh timer register in RM0455 */
+     /* Set the device refresh rate
+      * COUNT = [(SDRAM self refresh time / number of row) x  SDRAM CLK] – 20
+              = [(64ms/4096) * 100MHz] - 20 = 1562.5 - 20 ~ 1542 */
+     HAL_SDRAM_ProgramRefreshRate(&hsdram2, 1542);
   /* USER CODE END FMC_Init 2 */
 }
 
