@@ -1,10 +1,10 @@
-17:29:26 **** Incremental Build of configuration Debug for project sdram_interfacin_Boot ****
+16:29:49 **** Incremental Build of configuration Debug for project sdram_interfacin_Boot ****
 make -j28 all 
 arm-none-eabi-size  sdram_interfacin_Boot.elf 
    text	   data	    bss	    dec	    hex	filename
-  36044	     16	   2284	  38344	   95c8	sdram_interfacin_Boot.elf
+  36052	     16	   2284	  38352	   95d0	sdram_interfacin_Boot.elf
 Finished building: default.size.stdout
  
 
-17:29:26 Build Finished. 0 errors, 0 warnings. (took 183ms)
+16:29:49 Build Finished. 0 errors, 0 warnings. (took 185ms)
 
